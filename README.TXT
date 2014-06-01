@@ -39,4 +39,7 @@ domain, you are also free to use this code under any version of the
 GPL, LPGL, Apache, or BSD licenses, or contact me for use of another
 license.
 
+In addition, by request, this code may also be used under the "unlicense" 
+described at http://unlicense.org/ .  See the file UNLICENSE in the repo.
+
 Sean Owens.
