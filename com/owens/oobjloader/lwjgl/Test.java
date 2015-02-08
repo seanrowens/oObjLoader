@@ -37,13 +37,8 @@ public class Test {
      */
     public static void main(String[] args) {
 
-//        String filename = "/Users/sean/sample_obj_files/wallTest.obj";
-//        String filename = "/Users/sean/src/owens/oobjloader/test/procerus_complete.obj";
-//        String filename = "/Users/sean/newobjfiles/mini_obj.obj";
-//        String filename = "/Users/sean/newobjfiles/thompson.obj";
-//        String filename = "/Users/sean/newobjfiles/extincteur_obj.obj";
-        String filename = "/Users/sean/uvmapperclassicsamples/torus.obj";
-        String defaultTextureMaterial = "/Users/sean/default_texture.png";
+        String filename = null;
+        String defaultTextureMaterial = null;
 
         boolean fullscreen = false;
 
