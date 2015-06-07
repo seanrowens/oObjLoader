@@ -1,3 +1,5 @@
+== INTRO ==
+
 This is a java library for parsing and loading WaveFront .OBJ files.
 
 There's some somewhat boring stuff before I get into the meat of
@@ -23,7 +25,7 @@ This isn't an issue of oObjLoader in particular, but of all
 First of all, a .OBJ file is just a model of a single object.  It
 describes the geometry of an object, and also can reference external
 .MTL files that describe 'materials', i.e. colors, reflectivity, etc.
-(The oObjLoader parser will parse .MTL files as well.)
+(The oObjLoader parser will fully parse .MTL files as well.)
 
 But .OBJ files do NOT include any information about lighting,
 animation, or many other things you're going to need.  Heck even the
@@ -36,6 +38,8 @@ Once you've parsed the an .OBJ file (and possibly one or more .MTL
 files), you still need to turn that data into something you can draw.
 And what that data will look like depends entirely on the code you are
 using (or have written) to draw it.
+
+== HOW OOBJLOADER WORKS == 
 
 If you break down the process of "loading" an .OBJ file, it breaks
 down into three phases;
@@ -79,9 +83,11 @@ everything from ASCII into floats or whatever, and knows what Builder
 method to call based on what everything is.  I.e "here's a vertex,
 here's a face", etc.
 
-So, despite the fact that any Builder I implement probably won't be
-what you want, I whipped together a quick implementation, along with
-some classes for vertices, faces, etc.
+== EXAMPLE CODE == 
+
+Despite the fact that any Builder I implement probably won't be what
+you want, I whipped together a quick implementation, along with some
+classes for vertices, faces, etc.
 
 But it's pretty straight forward.  It does things in somewhat wasteful
 ways, It's probably wrong for you and definitely not nearly as
@@ -97,13 +103,17 @@ Builder into stuff my VBO code could use to draw it on the screen
 using OpenGL. (By way of the LWJGL library, which is awesome.)
 
 Note, while oOblLoader will fully parse the .MTL files, the VBO sample
-code really doesn't know what to do with most of the stuff in there,
-i.e. how to render reflections, etc.  In fact really it just uses the
-default OpenGL lighting and the texture in the .MTL file.
+code really doesn't know what to do with most of the stuff in there.
+In fact really it just uses the default OpenGL lighting and the
+texture image file, if any, specified in the .MTL file.
+
+== LWJGL ==
 
 Also note that you will need to download and install LWJGL
 (Lightweight Java Game Library http://www.lwjgl.org/) to compile/use
 the OpenGL parts of oObjLoader.
+
+== LICENSE ==
 
 This code was written by myself, Sean R. Owens, sean at guild dot net,
 and is released to the public domain. Share and enjoy. Since some
