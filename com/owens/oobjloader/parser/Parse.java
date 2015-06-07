@@ -23,7 +23,7 @@ public class Parse {
     private final static String OBJ_POINT = "p";
     private final static String OBJ_LINE = "l";
     private final static String OBJ_MAPLIB = "maplib";
-    private final static String OBJ_USEMAP = "maplib";
+    private final static String OBJ_USEMAP = "usemap";
     private final static String OBJ_MTLLIB = "mtllib";
     private final static String OBJ_USEMTL = "usemtl";
     private final static String MTL_NEWMTL = "newmtl";
