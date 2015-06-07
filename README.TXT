@@ -18,8 +18,7 @@ do that, unless it's part of a much larger 3D system.  (In which case
 it's really not an .OBJ loader, it's a large 3D system of some sort.)
 
 This isn't an issue of oObjLoader in particular, but of all
-.OBJ loaders in general.  (Although there is a lot of extra example code
-in oObjLoader that will help.)
+.OBJ loaders in general.
 
 First of all, a .OBJ file is just a model of a single object.  It
 describes the geometry of an object, and also can reference external
@@ -102,6 +101,10 @@ code really doesn't know what to do with most of the stuff in there,
 i.e. how to render reflections, etc.  In fact really it just uses the
 default OpenGL lighting and the texture in the .MTL file.
 
+Also note that you will need to download and install LWJGL
+(Lightweight Java Game Library http://www.lwjgl.org/) to compile/use
+the OpenGL parts of oObjLoader.
+
 This code was written by myself, Sean R. Owens, sean at guild dot net,
 and is released to the public domain. Share and enjoy. Since some
 people argue that it is impossible to release software to the public
@@ -117,4 +120,4 @@ you want with the code.  Fold it, spindle it, mutilate it, knock yourself
 out.  Copy bits and pieces into your code tree, copy the whole thing into
 your code tree, do as you please.
 
-Sean Owens.
+Sean Owens
