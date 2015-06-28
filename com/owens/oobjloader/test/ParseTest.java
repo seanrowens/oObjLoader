@@ -14,9 +14,9 @@ import com.owens.oobjloader.builder.Build;
 import static java.util.logging.Level.INFO;
 import java.util.logging.Logger;
 
-public class Test {
+public class ParseTest {
 
-    private static Logger log = Logger.getLogger(com.owens.oobjloader.lwjgl.Test.class.getName());
+    private static Logger log = Logger.getLogger(com.owens.oobjloader.lwjgl.DisplayTest.class.getName());
 
     public static void main(String[] argv) {
 

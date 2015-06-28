@@ -11,11 +11,11 @@ package com.owens.oobjloader.lwjgl;
 
 import java.util.*;
 
-public class Scene {
+public class DisplayModel {
 
     ArrayList<VBO> vboList = new ArrayList<VBO>();
 
-    public Scene() {
+    public DisplayModel() {
     }
 
     public void addVBO(VBO r) {

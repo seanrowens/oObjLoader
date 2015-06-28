@@ -32,9 +32,9 @@ import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 
 // Based on tutorial code from http://lwjgl.org/wiki/doku.php/lwjgl/tutorials/opengl/basicopengl
-public class Test {
+public class DisplayTest {
     
-    private static Logger log = Logger.getLogger(Test.class.getName());
+    private static Logger log = Logger.getLogger(DisplayTest.class.getName());
     
     public static final String WINDOW_TITLE = "Test OBJ loader";
     /**
@@ -133,7 +133,7 @@ public class Test {
         try {
             defaultTextureID = textureLoader.load(defaultTextureMaterial);
         } catch (IOException ex) {
-            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DisplayTest.class.getName()).log(Level.SEVERE, null, ex);
             log.log(SEVERE, "Got an exception trying to load default texture material = " + defaultTextureMaterial + " , ex=" + ex);
             ex.printStackTrace();
         }
@@ -156,7 +156,7 @@ public class Test {
                 log.log(INFO, "Trying to load  " + mapKdFile.getAbsolutePath());
                 currentTextureID = textureLoader.load(mapKdFile.getAbsolutePath());
             } catch (IOException ex) {
-                Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(DisplayTest.class.getName()).log(Level.SEVERE, null, ex);
                 log.log(INFO, "Got an exception trying to load  texture material = " + material.mapKdFilename + " , ex=" + ex);
                 ex.printStackTrace();
                 log.log(INFO, "Using default texture ID = " + defaultTextureID);
@@ -250,9 +250,9 @@ public class Test {
      * Runs the program (the "main loop")
      */
     private static void run(String filename, String defaultTextureMaterial) {
-        Scene scene = null;
+        DisplayModel scene = null;
         
-        scene = new Scene();
+        scene = new DisplayModel();
         
         log.log(INFO, "Parsing WaveFront OBJ file");
         Build builder = new Build();
