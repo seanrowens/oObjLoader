@@ -1,29 +1,36 @@
 package com.owens.oobjloader.parser;
 
-// Written by Sean R. Owens, sean at guild dot net, released to the
-// public domain. Share and enjoy. Since some people argue that it is
-// impossible to release software to the public domain, you are also free
-// to use this code under any version of the GPL, LPGL, Apache, or BSD
-// licenses, or contact me for use of another license.
+// This code was written by myself, Sean R. Owens, sean at guild dot net,
+// and is released to the public domain. Share and enjoy. Since some
+// people argue that it is impossible to release software to the public
+// domain, you are also free to use this code under any version of the
+// GPL, LPGL, Apache, or BSD licenses, or contact me for use of another
+// license.  (I generally don't care so I'll almost certainly say yes.)
+// In addition this code may also be used under the "unlicense" described
+// at http://unlicense.org/ .  See the file UNLICENSE in the repo.
+
 import java.util.*;
+import static java.util.logging.Level.SEVERE;
+import java.util.logging.Logger;
 
 public class StringUtils {
+    private static Logger log = Logger.getLogger(StringUtils.class.getName());
 
     // ----------------------------------------------------------------------
     // String parsing stuff
     // ----------------------------------------------------------------------
     public static void printErrMsg(String methodName, String errorMsg, int mCount, char message[]) {
-        System.err.println("ERROR: " + methodName + ": " + errorMsg);
-        System.err.print("ERROR: " + methodName + ": msg=\\");
+        log.log(SEVERE, methodName + ": " + errorMsg);
+        String msg1 = "ERROR: " + methodName + ": msg=\\";
+        String msg2 = "ERROR: " + methodName + ":      ";
         for (int loopi = 0; loopi < message.length; loopi++) {
-            System.err.print(message[loopi]);
+            msg1 = msg1 + message[loopi];
+            msg2 = msg2 + " ";
         }
-        System.err.println("\\");
-        System.err.print("ERROR: " + methodName + ":      ");
-        for (int i = 0; i < mCount; i++) {
-            System.err.print(" ");
-        }
-        System.err.println("^");
+        msg1 = msg1 + "\\";
+        msg2 = msg2 + "^";
+        log.log(SEVERE, msg1);
+        log.log(SEVERE, msg1);
     }
 
     // if errMsg != null, then we test if we've run past end of message
@@ -205,17 +212,17 @@ public class StringUtils {
             return null;
         }
 
-        //	System.err.println("parseListVerticeNTuples: list=|"+list+"|");
+        //	log.log(INFO, "list=|"+list+"|");
 
         String[] vertexStrings = parseWhitespaceList(list);
 
-        //	System.err.println("parseListVerticeNTuples: found "+vertexStrings.length+" strings in parseWhitespaceList");
+        //	log.log(INFO, "found "+vertexStrings.length+" strings in parseWhitespaceList");
 
         ArrayList<Integer> returnList = new ArrayList<Integer>();
         Integer emptyMarker = new Integer(BuilderInterface.EMPTY_VERTEX_VALUE);
 
         for (int loopi = 0; loopi < vertexStrings.length; loopi++) {
-            //	    System.err.println("parseListVerticeNTuples: parsing vertexStrings["+loopi+"]=|"+vertexStrings[loopi]+"|");
+            //	    log.log(INFO, "parsing vertexStrings["+loopi+"]=|"+vertexStrings[loopi]+"|");
             parseVerticeNTuple(vertexStrings[loopi], returnList, emptyMarker, expectedValuesPerTuple);
         }
 
@@ -228,20 +235,20 @@ public class StringUtils {
 
     private static void parseVerticeNTuple(String list, ArrayList<Integer> returnList, Integer emptyMarker, int expectedValueCount) {
 
-//        	System.err.println("parseVerticeNTuple: list=|"+list+"|");
+//        	log.log(INFO, "list=|"+list+"|");
 
         String[] numbers = parseList('/', list);
-//        	System.err.println("parseVerticeNTuple: found "+numbers.length+" strings in parselist with delim /");
+//        	log.log(INFO, "found "+numbers.length+" strings in parselist with delim /");
         int foundCount = 0;
 
         int index = 0;
         while (index < numbers.length) {
-//            	    System.err.println("parseVerticeNTuple: examining numbers["+index+"]=|"+numbers[index]+"|");
+//            	    log.log(INFO, "examining numbers["+index+"]=|"+numbers[index]+"|");
             if (numbers[index].trim().equals("")) {
-//                System.err.println("numbers["+index+"] is empty, adding emptymarker to list");
+//                log.log(INFO, "numbers["+index+"] is empty, adding emptymarker to list");
                 returnList.add(emptyMarker);
             } else {
-//                                System.err.println("numbers["+index+"] is NOT empty, adding parsed int "+Integer.parseInt(numbers[index])+" to list.");
+//                                log.log(INFO, "numbers["+index+"] is NOT empty, adding parsed int "+Integer.parseInt(numbers[index])+" to list.");
                 returnList.add(Integer.parseInt(numbers[index]));
             }
             foundCount++;

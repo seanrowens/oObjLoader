@@ -15,7 +15,7 @@ from the LWJGL website;
 
    /Users/sean/lwjgl-2.7.1
 
-   c) add LWJGL to the libraries in Netbeans, so you can laater add
+   c) add LWJGL to the libraries in Netbeans, so you can later add
    them to your project.  These instructions are pretty much stolen from;
 
    http://lwjgl.org/wiki/index.php?title=Setting_Up_LWJGL_with_NetBeans
@@ -51,7 +51,7 @@ will be referred to as "mydir".  When you run "ls -l" on mydir, you
 should see something like;
 
    total 16
-   -rw-r--r--  1 sean  staff  2613 Jan  8 21:31 #README_NETBEANS.TXT#
+   -rw-r--r--  1 sean  staff  2613 Jan  8 21:31 README_NETBEANS.TXT
    -rw-r--r--  1 sean  staff  1786 Jan  8 21:04 README.TXT
    drwxr-xr-x  3 sean  staff   102 Jan  8 21:03 com
 

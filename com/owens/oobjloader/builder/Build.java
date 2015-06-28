@@ -1,15 +1,23 @@
 package com.owens.oobjloader.builder;
 
-// Written by Sean R. Owens, sean at guild dot net, released to the
-// public domain. Share and enjoy. Since some people argue that it is
-// impossible to release software to the public domain, you are also free
-// to use this code under any version of the GPL, LPGL, Apache, or BSD
-// licenses, or contact me for use of another license.
+// This code was written by myself, Sean R. Owens, sean at guild dot net,
+// and is released to the public domain. Share and enjoy. Since some
+// people argue that it is impossible to release software to the public
+// domain, you are also free to use this code under any version of the
+// GPL, LPGL, Apache, or BSD licenses, or contact me for use of another
+// license.  (I generally don't care so I'll almost certainly say yes.)
+// In addition this code may also be used under the "unlicense" described
+// at http://unlicense.org/ .  See the file UNLICENSE in the repo.
 import com.owens.oobjloader.parser.BuilderInterface;
 
 import java.util.*;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.SEVERE;
+import java.util.logging.Logger;
 
 public class Build implements BuilderInterface {
+
+    private Logger log = Logger.getLogger(Build.class.getName());
 
     public String objFilename = null;
     // these accumulate each type of vertex as they are parsed, so they can then be referenced via index.
@@ -51,12 +59,12 @@ public class Build implements BuilderInterface {
 
     public void addVertexGeometric(float x, float y, float z) {
         verticesG.add(new VertexGeometric(x, y, z));
-//        System.err.println("Added geometric vertex " + verticesG.size() + " = " + verticesG.get(verticesG.size() - 1));
+//        log.log(INFO,"Added geometric vertex " + verticesG.size() + " = " + verticesG.get(verticesG.size() - 1));
     }
 
     public void addVertexTexture(float u, float v) {
         verticesT.add(new VertexTexture(u, v));
-//        System.err.println("Added texture  vertex " + verticesT.size() + " = " + verticesT.get(verticesT.size() - 1));
+//        log.log(INFO,"Added texture  vertex " + verticesT.size() + " = " + verticesT.get(verticesT.size() - 1));
     }
 
     public void addVertexNormal(float x, float y, float z) {
@@ -64,11 +72,11 @@ public class Build implements BuilderInterface {
     }
 
     public void addPoints(int[] values) {
-        System.err.println("Build.addPoints: @TODO: Got " + values.length + " points in builder, ignoring");
+        log.log(INFO, "@TODO: Got " + values.length + " points in builder, ignoring");
     }
 
     public void addLine(int[] values) {
-        System.err.println("Build.addLine: @TODO: Got a line of " + values.length + " segments in builder, ignoring");
+        log.log(INFO, "@TODO: Got a line of " + values.length + " segments in builder, ignoring");
     }
 
     public void addFace(int[] vertexIndices) {
@@ -85,7 +93,7 @@ public class Build implements BuilderInterface {
             // >     vertex numbers. Negative values indicate relative vertex numbers.
 
             FaceVertex fv = new FaceVertex();
-//            System.err.println("Adding vertex g=" + vertexIndices[loopi] + " t=" + vertexIndices[loopi + 1] + " n=" + vertexIndices[loopi + 2]);
+//            log.log(INFO,"Adding vertex g=" + vertexIndices[loopi] + " t=" + vertexIndices[loopi + 1] + " n=" + vertexIndices[loopi + 2]);
             int vertexIndex;
             vertexIndex = vertexIndices[loopi++];
             // Note that we can use negative references to denote vertices in manner relative to the current point in the file, i.e.
@@ -98,7 +106,7 @@ public class Build implements BuilderInterface {
                 // one, so we offset by -1 for the 0-indexed array lists.
                 fv.v = verticesG.get(vertexIndex - 1);
             } else {
-                System.err.println("Build.addFace: ERROR Index for geometric vertex=" + vertexIndex + " is out of the current range of geometric vertex values 1 to " + verticesG.size() + ", ignoring");
+                log.log(SEVERE, "Index for geometric vertex=" + vertexIndex + " is out of the current range of geometric vertex values 1 to " + verticesG.size() + ", ignoring");
             }
 
             vertexIndex = vertexIndices[loopi++];
@@ -113,7 +121,7 @@ public class Build implements BuilderInterface {
                     // one, so we offset by -1 for the 0-indexed array lists.
                     fv.t = verticesT.get(vertexIndex - 1);
                 } else {
-                    System.err.println("Build.addFace: ERROR Index for texture vertex=" + vertexIndex + " is out of the current range of texture vertex values 1 to " + verticesT.size() + ", ignoring");
+                    log.log(SEVERE, "Index for texture vertex=" + vertexIndex + " is out of the current range of texture vertex values 1 to " + verticesT.size() + ", ignoring");
                 }
             }
 
@@ -129,12 +137,12 @@ public class Build implements BuilderInterface {
                     // one, so we offset by -1 for the 0-indexed array lists.
                     fv.n = verticesN.get(vertexIndex - 1);
                 } else {
-                    System.err.println("Build.addFace: ERROR Index for vertex normal=" + vertexIndex + " is out of the current range of vertex normal values 1 to " + verticesN.size() + ", ignoring");
+                    log.log(SEVERE, "Index for vertex normal=" + vertexIndex + " is out of the current range of vertex normal values 1 to " + verticesN.size() + ", ignoring");
                 }
             }
 
             if (fv.v == null) {
-                System.err.println("Build.addFace: ERROR Can't add vertex to face with missing vertex!  Throwing away face.");
+                log.log(SEVERE, "Can't add vertex to face with missing vertex!  Throwing away face.");
                 faceErrorCount++;
                 return;
             }
@@ -154,7 +162,7 @@ public class Build implements BuilderInterface {
 
             face.add(fv);
         }
-//        System.err.println("Parsed face=" + face);
+//        log.log(INFO,"Parsed face=" + face);
         if (currentSmoothingGroup != null) {
             currentSmoothingGroup.add(face);
         }
@@ -303,16 +311,16 @@ public class Build implements BuilderInterface {
     // >     defined. There is no default.
     public void addMapLib(String[] names) {
         if (null == names) {
-            System.err.println("Build.addMapLib: @TODO: ERROR! Got a maplib line with null names array - blank group line? (i.e. \"g\\n\" ?)");
+            log.log(INFO, "@TODO: ERROR! Got a maplib line with null names array - blank group line? (i.e. \"g\\n\" ?)");
             return;
         }
         if (names.length == 1) {
-            System.err.println("Build.addMapLib: @TODO: Got a maplib line with one name=|" + names[0] + "|");
+            log.log(INFO, "@TODO: Got a maplib line with one name=|" + names[0] + "|");
             return;
         }
-        System.err.println("Build.addMapLib: @TODO: Got a maplib line;");
+        log.log(INFO, "@TODO: Got a maplib line;");
         for (int loopi = 0; loopi < names.length; loopi++) {
-            System.err.println("        names[" + loopi + "] = |" + names[loopi] + "|");
+            log.log(INFO, "        names[" + loopi + "] = |" + names[loopi] + "|");
         }
     }
 
@@ -367,16 +375,16 @@ public class Build implements BuilderInterface {
     // @TODO: I think I need to just delete this... because we now parse material lib files in Parse.java in processMaterialLib()
 //    public void addMaterialLib(String[] names) {
 //        if (null == names) {
-//            System.err.println("Build.addMaterialLib: @TODO: Got a mtllib line with null names array - blank group line? (i.e. \"g\\n\" ?)");
+//            log.log(INFO,"@TODO: Got a mtllib line with null names array - blank group line? (i.e. \"g\\n\" ?)");
 //            return;
 //        }
 //        if (names.length == 1) {
-//            System.err.println("Build.addMaterialLib: @TODO: Got a mtllib line with one name=|" + names[0] + "|");
+//            log.log(INFO,"@TODO: Got a mtllib line with one name=|" + names[0] + "|");
 //            return;
 //        }
-//        System.err.println("Build.addMaterialLib: @TODO: Got a mtllib line;");
+//        log.log(INFO,"@TODO: Got a mtllib line;");
 //        for (int loopi = 0; loopi < names.length; loopi++) {
-//            System.err.println("        names[" + loopi + "] = |" + names[loopi] + "|");
+//            log.log(INFO,"        names[" + loopi + "] = |" + names[loopi] + "|");
 //        }
 //    }
     public void newMtl(String name) {
@@ -425,12 +433,12 @@ public class Build implements BuilderInterface {
     public void setD(boolean halo, float factor) {
         currentMaterialBeingParsed.dHalo = halo;
         currentMaterialBeingParsed.dFactor = factor;
-        System.err.println("Build.setD: @TODO: got a setD call!");
+        log.log(INFO, "@TODO: got a setD call!");
     }
 
     public void setNs(float exponent) {
         currentMaterialBeingParsed.nsExponent = exponent;
-        System.err.println("Build.setNs: @TODO: got a setNs call!");
+        log.log(INFO, "@TODO: got a setNs call!");
     }
 
     public void setSharpness(float value) {
@@ -482,6 +490,6 @@ public class Build implements BuilderInterface {
     }
 
     public void doneParsingObj(String filename) {
-        System.err.println("Build.doneParsing: Loaded filename '" + filename + "' with " + verticesG.size() + " verticesG, " + verticesT.size() + " verticesT, " + verticesN.size() + " verticesN and " + faces.size() + " faces, of which " + faceTriCount + " triangles, " + faceQuadCount + " quads, and " + facePolyCount + " with more than 4 points, and faces with errors " + faceErrorCount);
+        log.log(INFO, "Loaded filename '" + filename + "' with " + verticesG.size() + " verticesG, " + verticesT.size() + " verticesT, " + verticesN.size() + " verticesN and " + faces.size() + " faces, of which " + faceTriCount + " triangles, " + faceQuadCount + " quads, and " + facePolyCount + " with more than 4 points, and faces with errors " + faceErrorCount);
     }
 }

@@ -1,10 +1,14 @@
 package com.owens.oobjloader.lwjgl;
 
-// Written by Sean R. Owens, sean at guild dot net, released to the
-// public domain. Share and enjoy. Since some people argue that it is
-// impossible to release software to the public domain, you are also free
-// to use this code under any version of the GPL, LPGL, Apache, or BSD
-// licenses, or contact me for use of another license.
+// This code was written by myself, Sean R. Owens, sean at guild dot net,
+// and is released to the public domain. Share and enjoy. Since some
+// people argue that it is impossible to release software to the public
+// domain, you are also free to use this code under any version of the
+// GPL, LPGL, Apache, or BSD licenses, or contact me for use of another
+// license.  (I generally don't care so I'll almost certainly say yes.)
+// In addition this code may also be used under the "unlicense" described
+// at http://unlicense.org/ .  See the file UNLICENSE in the repo.
+
 import com.owens.oobjloader.builder.FaceVertex;
 import com.owens.oobjloader.builder.Face;
 import java.util.*;
@@ -12,13 +16,19 @@ import java.util.*;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.SEVERE;
+import java.util.logging.Logger;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.ARBVertexBufferObject;
 
 public class VBOFactory {
+    
+    private static Logger log = Logger.getLogger(VBOFactory.class.getName());
+
 
     public static VBO build(int textureID, ArrayList<Face> triangles) {
-        //	System.err.println("VBOFactory.build: building a vbo!");
+        //	log.log(INFO, "building a vbo!");
 
         if (triangles.size() <= 0) {
             throw new RuntimeException("Can not build a VBO if we have no triangles with which to build it.");
@@ -51,10 +61,10 @@ public class VBOFactory {
         int numMIssingNormals = 0;
         int numMissingUV = 0;
         FloatBuffer verticeAttributes;
-        System.err.println("VBOFactory.build: Creating buffer of size " + verticeAttributesCount + " vertices at " + VBO.ATTR_SZ_FLOATS + " floats per vertice for a total of " + (verticeAttributesCount * VBO.ATTR_SZ_FLOATS) + " floats.");
+        log.log(INFO, "Creating buffer of size " + verticeAttributesCount + " vertices at " + VBO.ATTR_SZ_FLOATS + " floats per vertice for a total of " + (verticeAttributesCount * VBO.ATTR_SZ_FLOATS) + " floats.");
         verticeAttributes = BufferUtils.createFloatBuffer(verticeAttributesCount * VBO.ATTR_SZ_FLOATS);
         if (null == verticeAttributes) {
-            System.err.println("VBOFactory.build: ERROR Unable to allocate verticeAttributes buffer of size " + (verticeAttributesCount * VBO.ATTR_SZ_FLOATS) + " floats.");
+            log.log(SEVERE, "Unable to allocate verticeAttributes buffer of size " + (verticeAttributesCount * VBO.ATTR_SZ_FLOATS) + " floats.");
         }
         for (FaceVertex vertex : faceVertexList) {
             verticeAttributes.put(vertex.v.x);
@@ -85,8 +95,7 @@ public class VBOFactory {
         }
         verticeAttributes.flip();
 
-        System.err.println("Had " + numMIssingNormals + " missing normals and " + numMissingUV + " missing UV coords");
-
+        log.log(INFO, "Had " + numMIssingNormals + " missing normals and " + numMissingUV + " missing UV coords");
 
         IntBuffer indices;    // indices into the vertices, to specify triangles.
         indices = BufferUtils.createIntBuffer(indicesCount);

@@ -1,17 +1,20 @@
 package com.owens.oobjloader.lwjgl;
 
-// Written by Sean R. Owens, sean at guild dot net, released to the
-// public domain. Share and enjoy. Since some people argue that it is
-// impossible to release software to the public domain, you are also free
-// to use this code under any version of the GPL, LPGL, Apache, or BSD
-// licenses, or contact me for use of another license.
+// This code was written by myself, Sean R. Owens, sean at guild dot net,
+// and is released to the public domain. Share and enjoy. Since some
+// people argue that it is impossible to release software to the public
+// domain, you are also free to use this code under any version of the
+// GPL, LPGL, Apache, or BSD licenses, or contact me for use of another
+// license.  (I generally don't care so I'll almost certainly say yes.)
+// In addition this code may also be used under the "unlicense" described
+// at http://unlicense.org/ .  See the file UNLICENSE in the repo.
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.lwjgl.util.glu.GLU; 
+import org.lwjgl.util.glu.GLU;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
@@ -22,26 +25,36 @@ import com.owens.oobjloader.builder.Face;
 import com.owens.oobjloader.builder.FaceVertex;
 import com.owens.oobjloader.builder.Material;
 import com.owens.oobjloader.parser.Parse;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.SEVERE;
 
 // Based on tutorial code from http://lwjgl.org/wiki/doku.php/lwjgl/tutorials/opengl/basicopengl
 public class Test {
-
+    
+    private static Logger log = Logger.getLogger(Test.class.getName());
+    
     public static final String WINDOW_TITLE = "Test OBJ loader";
-    /** Desired frame time */
+    /**
+     * Desired frame time
+     */
     private static final int FRAMERATE = 60;
     private static boolean finished;
 
     /**
      * Application init
+     *
      * @param args Commandline args
      */
     public static void main(String[] args) {
-
+        
         String filename = null;
         String defaultTextureMaterial = null;
-
+        
         boolean fullscreen = false;
-
+        
         for (int loopi = 0; loopi < args.length; loopi++) {
             if (null == args[loopi]) {
                 continue;
@@ -54,7 +67,7 @@ public class Test {
                 filename = args[loopi];
             }
         }
-
+        
         try {
             init(fullscreen);
             run(filename, defaultTextureMaterial);
@@ -75,17 +88,17 @@ public class Test {
         for (Face face : builder.faces) {
             if (face.material != currentMaterial) {
                 if (!currentFaceList.isEmpty()) {
-                    System.err.println("Adding list of " + currentFaceList.size() + " triangle faces with material " + currentMaterial + "  to our list of lists of faces.");
+                    log.log(INFO, "Adding list of " + currentFaceList.size() + " triangle faces with material " + currentMaterial + "  to our list of lists of faces.");
                     facesByTextureList.add(currentFaceList);
                 }
-                System.err.println("Creating new list of faces for material " + face.material);
+                log.log(INFO, "Creating new list of faces for material " + face.material);
                 currentMaterial = face.material;
                 currentFaceList = new ArrayList<Face>();
             }
             currentFaceList.add(face);
         }
         if (!currentFaceList.isEmpty()) {
-            System.err.println("Adding list of " + currentFaceList.size() + " triangle faces with material " + currentMaterial + "  to our list of lists of faces.");
+            log.log(INFO, "Adding list of " + currentFaceList.size() + " triangle faces with material " + currentMaterial + "  to our list of lists of faces.");
             facesByTextureList.add(currentFaceList);
         }
         return facesByTextureList;
@@ -118,13 +131,13 @@ public class Test {
     private static int setUpDefaultTexture(TextureLoader textureLoader, String defaultTextureMaterial) {
         int defaultTextureID = -1;
         try {
-            defaultTextureID = textureLoader.load(defaultTextureMaterial, true);
+            defaultTextureID = textureLoader.load(defaultTextureMaterial);
         } catch (IOException ex) {
             Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-            System.err.println("ERROR: Got an exception trying to load default texture material = " + defaultTextureMaterial + " , ex=" + ex);
+            log.log(SEVERE, "Got an exception trying to load default texture material = " + defaultTextureMaterial + " , ex=" + ex);
             ex.printStackTrace();
         }
-        System.err.println("INFO:  default texture ID = " + defaultTextureID);
+        log.log(INFO, "default texture ID = " + defaultTextureID);
         return defaultTextureID;
     }
 
@@ -140,13 +153,13 @@ public class Test {
             try {
                 File objFile = new File(builder.objFilename);
                 File mapKdFile = new File(objFile.getParent(), material.mapKdFilename);
-                System.err.println("Trying to load  " + mapKdFile.getAbsolutePath());
-                currentTextureID = textureLoader.load(mapKdFile.getAbsolutePath(), true);
+                log.log(INFO, "Trying to load  " + mapKdFile.getAbsolutePath());
+                currentTextureID = textureLoader.load(mapKdFile.getAbsolutePath());
             } catch (IOException ex) {
                 Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-                System.err.println("ERROR: Got an exception trying to load  texture material = " + material.mapKdFilename + " , ex=" + ex);
+                log.log(INFO, "Got an exception trying to load  texture material = " + material.mapKdFilename + " , ex=" + ex);
                 ex.printStackTrace();
-                System.err.println("ERROR: Using default texture ID = " + defaultTextureID);
+                log.log(INFO, "Using default texture ID = " + defaultTextureID);
                 currentTextureID = defaultTextureID;
             }
         }
@@ -194,18 +207,18 @@ public class Test {
         int normalCount = 0;
         for (Face face : triangleList) {
             if ((face.vertices.get(0).n != null)
-                    && (face.vertices.get(1).n != null)
-                    && (face.vertices.get(2).n != null)) {
+                && (face.vertices.get(1).n != null)
+                && (face.vertices.get(2).n != null)) {
                 normalCount++;
             }
             if ((face.vertices.get(0).t != null)
-                    && (face.vertices.get(1).t != null)
-                    && (face.vertices.get(2).t != null)) {
+                && (face.vertices.get(1).t != null)
+                && (face.vertices.get(2).t != null)) {
                 texturedCount++;
             }
         }
-        System.err.println("Building VBO, originally " + faceList.size() + " faces, of which originally " + countTriangles + " triangles, " + countQuads + " quads,  and  " + countNGons + " n-polygons with more than 4 vertices that were dropped.");
-        System.err.println("Triangle list has " + triangleList.size() + " rendered triangles of which " + normalCount + " have normals for all vertices and " + texturedCount + " have texture coords for all vertices.");
+        log.log(INFO, "Building VBO, originally " + faceList.size() + " faces, of which originally " + countTriangles + " triangles, " + countQuads + " quads,  and  " + countNGons + " n-polygons with more than 4 vertices that were dropped.");
+        log.log(INFO, "Triangle list has " + triangleList.size() + " rendered triangles of which " + normalCount + " have normals for all vertices and " + texturedCount + " have texture coords for all vertices.");
         return triangleList;
     }
 
@@ -222,12 +235,12 @@ public class Test {
 
         // Create default display of 640x480
         Display.create();
-
+        
         GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
         float fAspect = (float) Display.getDisplayMode().getWidth() / (float) Display.getDisplayMode().getHeight();
         GLU.gluPerspective(45.0f, fAspect, 0.5f, 400.0f);
-
+        
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glLoadIdentity();
         GL11.glViewport(0, 0, Display.getDisplayMode().getWidth() - 100, Display.getDisplayMode().getHeight() - 100);
@@ -238,73 +251,91 @@ public class Test {
      */
     private static void run(String filename, String defaultTextureMaterial) {
         Scene scene = null;
-
+        
         scene = new Scene();
-
-        System.err.println("Parsing WaveFront OBJ file");
+        
+        log.log(INFO, "Parsing WaveFront OBJ file");
         Build builder = new Build();
         Parse obj = null;
         try {
             obj = new Parse(builder, filename);
         } catch (java.io.FileNotFoundException e) {
-            System.err.println("Exception loading object!  e=" + e);
+            log.log(SEVERE, "Exception loading object!  e=" + e);
             e.printStackTrace();
         } catch (java.io.IOException e) {
-            System.err.println("Exception loading object!  e=" + e);
+            log.log(SEVERE, "Exception loading object!  e=" + e);
             e.printStackTrace();
         }
-        System.err.println("Done parsing WaveFront OBJ file");
-
-        System.err.println("Splitting OBJ file faces into list of faces per material");
+        log.log(INFO, "Done parsing WaveFront OBJ file");
+        
+        log.log(INFO, "Splitting OBJ file faces into list of faces per material");
         ArrayList<ArrayList<Face>> facesByTextureList = createFaceListsByMaterial(builder);
-        System.err.println("Done splitting OBJ file faces into list of faces per material, ended up with " + facesByTextureList.size() + " lists of faces.");
-
-        System.err.println("Loading default texture =" + defaultTextureMaterial);
+        log.log(INFO, "Done splitting OBJ file faces into list of faces per material, ended up with " + facesByTextureList.size() + " lists of faces.");
+        
         TextureLoader textureLoader = new TextureLoader();
-        int defaultTextureID = setUpDefaultTexture(textureLoader, defaultTextureMaterial);
-        System.err.println("Done loading default texture =" + defaultTextureMaterial);
-
+        int defaultTextureID = 0;
+        if (defaultTextureMaterial != null) {
+            log.log(INFO, "Loading default texture =" + defaultTextureMaterial);
+            defaultTextureID = setUpDefaultTexture(textureLoader, defaultTextureMaterial);
+            log.log(INFO, "Done loading default texture =" + defaultTextureMaterial);
+        }
+        if (defaultTextureID == -1) {
+            BufferedImage img = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+            Graphics g = img.getGraphics();
+            g.setColor(Color.BLUE);
+            g.fillRect(0, 0, 256, 256);
+            g.setColor(Color.RED);
+            for (int loop = 0; loop < 256; loop++) {
+                g.drawLine(loop, 0, loop, 255);
+                g.drawLine(0, loop, 255, loop);
+            }
+            defaultTextureID = textureLoader.convertToTexture(img);
+        }
         int currentTextureID = -1;
         for (ArrayList<Face> faceList : facesByTextureList) {
             if (faceList.isEmpty()) {
-                System.err.println("ERROR: got an empty face list.  That shouldn't be possible.");
+                log.log(INFO, "ERROR: got an empty face list.  That shouldn't be possible.");
                 continue;
             }
-            System.err.println("Getting material " + faceList.get(0).material);
+            log.log(INFO, "Getting material " + faceList.get(0).material);
             currentTextureID = getMaterialID(faceList.get(0).material, defaultTextureID, builder, textureLoader);
-            System.err.println("Splitting any quads and throwing any faces with > 4 vertices.");
+            log.log(INFO, "Splitting any quads and throwing any faces with > 4 vertices.");
             ArrayList<Face> triangleList = splitQuads(faceList);
-            System.err.println("Calculating any missing vertex normals.");
+            log.log(INFO, "Calculating any missing vertex normals.");
             calcMissingVertexNormals(triangleList);
-            System.err.println("Ready to build VBO of " + triangleList.size() + " triangles");;
-
+            log.log(INFO, "Ready to build VBO of " + triangleList.size() + " triangles");;
+            
             if (triangleList.size() <= 0) {
                 continue;
             }
-            System.err.println("Building VBO");
-
+            log.log(INFO, "Building VBO");
+            
             VBO vbo = VBOFactory.build(currentTextureID, triangleList);
-
-            System.err.println("Adding VBO with text id " + currentTextureID + ", with " + triangleList.size() + " triangles to scene.");
+            
+            log.log(INFO, "Adding VBO with text id " + currentTextureID + ", with " + triangleList.size() + " triangles to scene.");
             scene.addVBO(vbo);
         }
-        System.err.println("Finally ready to draw things.");
-
+        log.log(INFO, "Finally ready to draw things.");
+        
         float anglex = 0;
         float angley = 0;
         float anglez = 0;
-        float anglexInc = .25f;
-        float angleyInc = .005f;
-        float anglezInc = .25f;
+//        float anglexInc = .25f;
+//        float angleyInc = .005f;
+//        float anglezInc = .25f;
+        float anglexInc = 1f;
+        float angleyInc = 1f;
+        float anglezInc = 1f;
         float translatex = 0;
         float translatey = 0f;
         float translatez = -200f;
         float incrementx = 0;
         float incrementy = 0;
-        float incrementz = -0.1f;
+//        float incrementz = -0.1f;
+        float incrementz = -1f;
         float zmax = .10f;
         float zmin = -300f;
-
+        
         while (!finished) {
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glLoadIdentity();
@@ -322,7 +353,7 @@ public class Test {
             if (translatez <= zmin || translatez >= zmax) {
                 incrementz = -incrementz;
             }
-//            System.err.println("positioning at  " + translatex + ", " + translatey + ", " + translatez + " rotation " + anglex + ", " + angley + ", " + anglez);
+            log.log(INFO,"positioning at  " + translatex + ", " + translatey + ", " + translatez + " rotation " + anglex + ", " + angley + ", " + anglez);
             GL11.glTranslated(0, 0, translatez);
             GL11.glTranslated(0, translatey, 0);
             GL11.glTranslated(translatex, 0, 0);
@@ -376,6 +407,6 @@ public class Test {
         if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
             finished = true;
         }
-
+        
     }
 }
