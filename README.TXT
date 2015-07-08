@@ -24,8 +24,8 @@ This isn't an issue of oObjLoader in particular, but of all
 
 First of all, a .OBJ file is just a model of a single object.  It
 describes the geometry of an object, and also can reference external
-.MTL files that describe 'materials', i.e. colors, reflectivity, etc.
-(The oObjLoader parser will fully parse .MTL files as well.)
+.MTL files that describe 'materials', i.e. colors, reflectivity, textures,
+etc.  (The oObjLoader parser will fully parse .MTL files as well.)
 
 But .OBJ files do NOT include any information about lighting,
 animation, or many other things you're going to need.  Heck even the
@@ -46,7 +46,8 @@ down into three phases;
 
 1) Parse the lines of ASCII characters, keeping track of what they are
 supposed to represent, vertices, texture coordinates, vertex normals,
-etc, and turning strings of digits into floats/doubles.
+etc, and turning strings of digits into floats/doubles.  This includes
+parsing .MTL files and the parameters inside them, i.e. textures, etc.
 
 2) Save all of this parsed data somewhere, keeping track of vertices,
 texture coordinates, vertex normals, faces, etc.
@@ -58,7 +59,7 @@ no reason you have to use OpenGL.)
 Step 3 is going to be different for everyone depending on how they
 write their graphics code.  Step 2 is probably going to be different
 as well, because you may already have data structures to save all of
-that data, or they may want them to be in a certain way to be
+that data, or you may want them to be in a certain way to be
 efficient, or whatever.  Which is why I structured the oObjLoader the
 way I did.
 
@@ -76,11 +77,11 @@ Now HERE IS A KEY POINT - the Builder interface is a java style
 "interface".  In other words, it defines a bunch of method calls, but
 not the actual code.  The Builder interface maps very closely to the
 actual .OBJ file format, each call more or less just takes one element
-that we've parsed from the .OBJ file.  It has a bunch of method
+that we've parsed from the .OBJ or .MTL file.  It has a bunch of method
 definitions. (But since it's an interface, it doesnt' actually have the
-methods code, just the definition.)  The parser takes care of turning
-everything from ASCII into floats or whatever, and knows what Builder
-method to call based on what everything is.  I.e "here's a vertex,
+code for the method bodies, just the definition.)  The parser takes care 
+of turning everything from ASCII into floats or whatever, and knows what
+Builder method to call based on what everything is.  I.e "here's a vertex,
 here's a face", etc.
 
 == EXAMPLE CODE == 
@@ -90,13 +91,14 @@ you want, I whipped together a quick implementation, along with some
 classes for vertices, faces, etc.
 
 But it's pretty straight forward.  It does things in somewhat wasteful
-ways, It's probably wrong for you and definitely not nearly as
+ways, it is probably wrong for you and definitely not nearly as
 efficient as it could be.  On the other hand, hey, it works, so you
 can use it to play with .OBJ files right away.
 
 And then, because when I was trying to learn OpenGL I couldn't seem to
 find any straight up simple code showing how to do VBOs and such, I
-also threw in some VBO code, for examples.
+also threw in some VBO code (of the Fixed Function Pipeline style), as
+examples.
 
 And lastly I wrote some example code to convert from my example
 Builder into stuff my VBO code could use to draw it on the screen
