@@ -141,7 +141,7 @@ public class DisplayTest {
         return defaultTextureID;
     }
 
-    // Get the specified Material, bind it as a texture, and return the OpenGL ID.  Returns he default texture ID if we can't
+    // Get the specified Material, bind it as a texture, and return the OpenGL ID.  Returns the default texture ID if we can't
     // load the new texture, or if the material is a non texture and hence we ignore it.  
     private static int getMaterialID(Material material, int defaultTextureID, Build builder, TextureLoader textureLoader) {
         int currentTextureID;
