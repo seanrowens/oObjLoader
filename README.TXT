@@ -1,3 +1,5 @@
+== INTRO ==
+
 This is a java library for parsing and loading WaveFront .OBJ files.
 
 There's some somewhat boring stuff before I get into the meat of
@@ -18,13 +20,12 @@ do that, unless it's part of a much larger 3D system.  (In which case
 it's really not an .OBJ loader, it's a large 3D system of some sort.)
 
 This isn't an issue of oObjLoader in particular, but of all
-.OBJ loaders in general.  (Although there is a lot of extra example code
-in oObjLoader that will help.)
+.OBJ loaders in general.
 
 First of all, a .OBJ file is just a model of a single object.  It
 describes the geometry of an object, and also can reference external
-.MTL files that describe 'materials', i.e. colors, reflectivity, etc.
-(The oObjLoader parser will parse .MTL files as well.)
+.MTL files that describe 'materials', i.e. colors, reflectivity, textures,
+etc.  (The oObjLoader parser will fully parse .MTL files as well.)
 
 But .OBJ files do NOT include any information about lighting,
 animation, or many other things you're going to need.  Heck even the
@@ -38,12 +39,15 @@ files), you still need to turn that data into something you can draw.
 And what that data will look like depends entirely on the code you are
 using (or have written) to draw it.
 
+== HOW OOBJLOADER WORKS == 
+
 If you break down the process of "loading" an .OBJ file, it breaks
 down into three phases;
 
 1) Parse the lines of ASCII characters, keeping track of what they are
 supposed to represent, vertices, texture coordinates, vertex normals,
-etc, and turning strings of digits into floats/doubles.
+etc, and turning strings of digits into floats/doubles.  This includes
+parsing .MTL files and the parameters inside them, i.e. textures, etc.
 
 2) Save all of this parsed data somewhere, keeping track of vertices,
 texture coordinates, vertex normals, faces, etc.
@@ -55,7 +59,7 @@ no reason you have to use OpenGL.)
 Step 3 is going to be different for everyone depending on how they
 write their graphics code.  Step 2 is probably going to be different
 as well, because you may already have data structures to save all of
-that data, or they may want them to be in a certain way to be
+that data, or you may want them to be in a certain way to be
 efficient, or whatever.  Which is why I structured the oObjLoader the
 way I did.
 
@@ -73,34 +77,45 @@ Now HERE IS A KEY POINT - the Builder interface is a java style
 "interface".  In other words, it defines a bunch of method calls, but
 not the actual code.  The Builder interface maps very closely to the
 actual .OBJ file format, each call more or less just takes one element
-that we've parsed from the .OBJ file.  It has a bunch of method
+that we've parsed from the .OBJ or .MTL file.  It has a bunch of method
 definitions. (But since it's an interface, it doesnt' actually have the
-methods code, just the definition.)  The parser takes care of turning
-everything from ASCII into floats or whatever, and knows what Builder
-method to call based on what everything is.  I.e "here's a vertex,
+code for the method bodies, just the definition.)  The parser takes care 
+of turning everything from ASCII into floats or whatever, and knows what
+Builder method to call based on what everything is.  I.e "here's a vertex,
 here's a face", etc.
 
-So, despite the fact that any Builder I implement probably won't be
-what you want, I whipped together a quick implementation, along with
-some classes for vertices, faces, etc.
+== EXAMPLE CODE == 
+
+Despite the fact that any Builder I implement probably won't be what
+you want, I whipped together a quick implementation, along with some
+classes for vertices, faces, etc.
 
 But it's pretty straight forward.  It does things in somewhat wasteful
-ways, It's probably wrong for you and definitely not nearly as
+ways, it is probably wrong for you and definitely not nearly as
 efficient as it could be.  On the other hand, hey, it works, so you
 can use it to play with .OBJ files right away.
 
 And then, because when I was trying to learn OpenGL I couldn't seem to
 find any straight up simple code showing how to do VBOs and such, I
-also threw in some VBO code, for examples.
+also threw in some VBO code (of the Fixed Function Pipeline style), as
+examples.
 
 And lastly I wrote some example code to convert from my example
 Builder into stuff my VBO code could use to draw it on the screen
 using OpenGL. (By way of the LWJGL library, which is awesome.)
 
 Note, while oOblLoader will fully parse the .MTL files, the VBO sample
-code really doesn't know what to do with most of the stuff in there,
-i.e. how to render reflections, etc.  In fact really it just uses the
-default OpenGL lighting and the texture in the .MTL file.
+code really doesn't know what to do with most of the stuff in there.
+In fact really it just uses the default OpenGL lighting and the
+texture image file, if any, specified in the .MTL file.
+
+== LWJGL ==
+
+Also note that you will need to download and install LWJGL
+(Lightweight Java Game Library http://www.lwjgl.org/) to compile/use
+the OpenGL parts of oObjLoader.
+
+== LICENSE ==
 
 This code was written by myself, Sean R. Owens, sean at guild dot net,
 and is released to the public domain. Share and enjoy. Since some
@@ -117,4 +132,4 @@ you want with the code.  Fold it, spindle it, mutilate it, knock yourself
 out.  Copy bits and pieces into your code tree, copy the whole thing into
 your code tree, do as you please.
 
-Sean Owens.
+Sean Owens
